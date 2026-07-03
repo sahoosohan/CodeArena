@@ -1,0 +1,28 @@
+services:
+  db:
+    container_name: codearena_db
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: codearena
+    ports:
+      - "5332:5432"
+    restart: unless-stopped
+    volumes:
+      - codearena_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d codearena"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    # networks:
+    #   - db
+
+# networks:
+#   db:
+#     driver: bridge
+
+volumes:
+  codearena_pgdata:

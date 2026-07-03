@@ -13,7 +13,6 @@
   },
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -26,6 +25,9 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "@clerk/nextjs": "^7.5.12",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "@shadcn/react": "^0.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -36,6 +38,7 @@
     "lucide-react": "^1.22.0",
     "next": "^16.2.9",
     "next-themes": "^0.4.6",
+    "pg": "^8.22.0",
     "radix-ui": "^1.6.1",
     "react": "19.2.4",
     "react-day-picker": "^10.0.1",
@@ -55,6 +58,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
