@@ -17,12 +17,104 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    # networks:
-    #   - db
 
-# networks:
-#   db:
-#     driver: bridge
+  codebox-redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    volumes:
+      - codebox_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  codebox-api:
+    build:
+      context: ./services/Codebox
+      dockerfile: docker/executor/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      REDIS_URL: redis://codebox-redis:6379
+      AUTH_TOKEN: ${CODEBOX_AUTH_TOKEN}
+      EXECUTOR_TYPE: docker
+    depends_on:
+      codebox-redis:
+        condition: service_healthy
+    volumes:
+      - ./services/Codebox/src:/app/src:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  codebox-worker:
+    build:
+      context: ./services/Codebox
+      dockerfile: docker/executor/Dockerfile
+    command: node src/queue/worker.js
+    environment:
+      NODE_ENV: development
+      REDIS_URL: redis://codebox-redis:6379
+      EXECUTOR_TYPE: docker
+      WORKER_CONCURRENCY: 4
+    depends_on:
+      codebox-redis:
+        condition: service_healthy
+      codebox-image-node:
+        condition: service_completed_successfully
+      codebox-image-python:
+        condition: service_completed_successfully
+      codebox-image-gcc:
+        condition: service_completed_successfully
+      codebox-image-java:
+        condition: service_completed_successfully
+      codebox-image-typescript:
+        condition: service_completed_successfully
+      codebox-image-multi:
+        condition: service_completed_successfully
+    volumes:
+      - ./services/Codebox/src:/app/src:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  codebox-image-node:
+    image: codebox/node:18
+    build: ./services/Codebox/docker/images/node
+    command: ["/bin/true"]
+    restart: "no"
+
+  codebox-image-python:
+    image: codebox/python:3.8
+    build: ./services/Codebox/docker/images/python
+    command: ["/bin/true"]
+    restart: "no"
+
+  codebox-image-gcc:
+    image: codebox/gcc:9
+    build: ./services/Codebox/docker/images/gcc
+    command: ["/bin/true"]
+    restart: "no"
+
+  codebox-image-java:
+    image: codebox/java:17
+    build: ./services/Codebox/docker/images/java
+    command: ["/bin/true"]
+    restart: "no"
+
+  codebox-image-typescript:
+    image: codebox/typescript:5
+    build: ./services/Codebox/docker/images/typescript
+    command: ["/bin/true"]
+    restart: "no"
+
+  codebox-image-multi:
+    image: codebox/multi:latest
+    build: ./services/Codebox/docker/images/multi
+    command: ["/bin/true"]
+    restart: "no"
 
 volumes:
   codearena_pgdata:
+  codebox_redis_data:

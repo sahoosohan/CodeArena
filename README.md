@@ -1,4 +1,20 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+CodeArena is a Next.js application with an integrated, Docker-based CodeBox execution service.
+
+## Development
+
+Docker Desktop must be running. Configure the root `.env`, then start the database,
+CodeBox API, CodeBox worker, sandbox images, and Next.js app with one command:
+
+```bash
+npm run dev:all
+```
+
+CodeArena runs at `http://localhost:3001` and CodeBox runs at
+`http://localhost:3000`. Stop the background services with:
+
+```bash
+npm run services:down
+```
 
 ## Getting Started
 

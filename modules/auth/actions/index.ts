@@ -54,7 +54,7 @@ export const currentUserRole = async () => {
   }
 };
 
-/* export const getCurrentUserData = async () => {
+export const getCurrentUserData = async () => {
   try {
     const user = await currentUser();
 
@@ -65,6 +65,8 @@ export const currentUserRole = async () => {
     const data = await prisma.user.findUnique({
       where: { clerkId: user.id },
     });
+
+    return data
   } catch (error) {}
 };
- */
+
