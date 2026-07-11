@@ -22,7 +22,7 @@ export function useCreateProblem() {
 
   const form = useForm<ProblemFormData>({
     resolver: zodResolver(problemSchema),
-    defaultValues: defaultFormValues as ProblemFormData,
+    defaultValues: defaultFormValues,
   });
 
   const testCasesArray = useFieldArray({

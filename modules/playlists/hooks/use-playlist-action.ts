@@ -9,6 +9,12 @@ type CreatePlaylistInput = {
   description?: string;
 };
 
+export type Playlist = {
+  id: string;
+  name: string;
+  description?: string | null;
+};
+
 export function usePlaylistActions() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] =
@@ -16,13 +22,31 @@ export function usePlaylistActions() {
   const [selectedProblemId, setSelectedProblemId] = useState<string | null>(
     null,
   );
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [isLoadingPlaylists, setIsLoadingPlaylists] = useState(false);
 
   const openCreateModal = () => setIsCreateModalOpen(true);
   const closeCreateModal = () => setIsCreateModalOpen(false);
 
+  const fetchPlaylists = async () => {
+    setIsLoadingPlaylists(true);
+    try {
+      const response = await axios.get("/api/playlist");
+      if (response.data.success) {
+        setPlaylists(response.data.data ?? []);
+      }
+    } catch (error) {
+      toast.error("Failed to load playlists.");
+      console.error(error);
+    } finally {
+      setIsLoadingPlaylists(false);
+    }
+  };
+
   const openAddToPlaylist = (problemId: string) => {
     setSelectedProblemId(problemId);
     setIsAddToPlaylistModalOpen(true);
+    fetchPlaylists();
   };
 
   const closeAddToPlaylistModal = () => {
@@ -36,6 +60,7 @@ export function usePlaylistActions() {
       if (response.data.success) {
         toast.success(`Playlist "${name}" created successfully.`);
         closeCreateModal();
+        fetchPlaylists();
       }
     } catch (error) {
       toast.error("Failed to create playlist.");
@@ -64,6 +89,8 @@ export function usePlaylistActions() {
     isCreateModalOpen,
     isAddToPlaylistModalOpen,
     selectedProblemId,
+    playlists,
+    isLoadingPlaylists,
     openCreateModal,
     closeCreateModal,
     openAddToPlaylist,

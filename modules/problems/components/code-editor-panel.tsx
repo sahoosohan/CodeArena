@@ -55,7 +55,7 @@ const CodeEditorPanel = ({
             value={code}
             onChange={(value:string | undefined)=>onCodeChange(value || "")}
             theme={theme === "dark" ? "vs-dark":"light"}
-            options={{ ...EDITOR_OPTIONS, lineNumbers: "on" as const }}
+            options={{ ...EDITOR_OPTIONS, lineNumbers: "on" as const, wordWrap: "on" as const }}
             />
         </div>
 

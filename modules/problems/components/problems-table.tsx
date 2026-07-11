@@ -99,6 +99,8 @@ const ProblemsTable = ({ problems = [], user }: ProblemsTableProps) => {
         onClose={playlist.closeAddToPlaylistModal}
         onSubmit={playlist.handleAddToPlaylist}
         problemId={playlist.selectedProblemId}
+        playlists={playlist.playlists}
+        isLoadingPlaylists={playlist.isLoadingPlaylists}
       />
     </div>
   );

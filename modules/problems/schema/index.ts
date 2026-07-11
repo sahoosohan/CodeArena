@@ -52,7 +52,14 @@ export const problemSchema = z.object({
 
 export type ProblemFormData = z.infer<typeof problemSchema>;
 
-export const defaultFormValues = {
+// Draft type: same shape as ProblemFormData, but `difficulty` is allowed to be
+// unset until the user picks one in the <Select>. This is intentionally NOT
+// ProblemFormData itself, since a fresh form is not yet a valid submission.
+export type ProblemFormDraft = Omit<ProblemFormData, "difficulty"> & {
+  difficulty?: ProblemFormData["difficulty"];
+};
+
+export const defaultFormValues: ProblemFormDraft = {
   title: "",
   description: "",
   difficulty: undefined,
