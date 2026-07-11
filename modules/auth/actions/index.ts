@@ -63,17 +63,16 @@ export const getCurrentUserData = async () => {
     const user = await currentUser();
 
     if (!user) {
-      return {success: false, error: "No authenticated user found"}  
+      return null;
     }
 
     const data = await prisma.user.findUnique({
       where: { clerkId: user.id },
     });
 
-    return data
+    return data;
   } catch (error) {
     console.error("Error in getCurrentUserData:", error);
-    return {success: false, error: "Failed to fetch user data"}
+    return null;
   }
 };
-
