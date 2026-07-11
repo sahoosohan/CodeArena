@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { getDifficultyColor } from "../constant"; 
+import { getDifficultyColor } from "../constant";
 
 export function ProblemHeader({ problem }: any) {
   return (
@@ -27,7 +27,7 @@ export function ProblemHeader({ problem }: any) {
           </Badge>
         </div>
         <div className="flex flex-wrap gap-2">
-          {problem?.tags.map((tag: string) => (
+          {problem?.tags?.map((tag: string) => (
             <Badge key={tag} variant="outline" className="text-sm">
               {tag}
             </Badge>

@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "sonner";
 import { ProblemsHeader } from "./problems-header";
 import { useProblemFilters } from "../hooks/use-problem-filters";
 import { ProblemsFilters } from "./problem-filters";
@@ -15,9 +14,9 @@ import { usePagination } from "../hooks/use-pagination";
 import { ProblemRow } from "./problem-row";
 import { ProblemsEmpty } from "./problem-empty";
 import { ProblemsPagination } from "./problems-pagination";
+import AddToPlaylistModal from "@/modules/playlists/components/add-to-playlist";
 import CreatePlaylistModal from "@/modules/playlists/components/create-playlist";
 import { usePlaylistActions } from "@/modules/playlists/hooks/use-playlist-action";
-import AddToPlaylistModal from "@/modules/playlists/components/add-to-playlist";
 import type { ProblemListItem, ProblemUser } from "../types";
 
 type ProblemsTableProps = {
@@ -32,7 +31,7 @@ const ProblemsTable = ({ problems = [], user }: ProblemsTableProps) => {
 
   console.log("Filtered Problems:", filters.filteredProblems);
   console.log("Current Page Problems:", pagination.paginatedItems);
-
+  
   return (
     <div className="w-full max-w-7xl mx-auto space-y-8 p-6">
       <ProblemsHeader onCreatePlaylist={playlist.openCreateModal} />
@@ -52,11 +51,11 @@ const ProblemsTable = ({ problems = [], user }: ProblemsTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">Solved</TableHead>
+                <TableHead className="w-25">Solved</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Tags</TableHead>
-                <TableHead className="w-[120px]">Difficulty</TableHead>
-                <TableHead className="w-[200px]">Actions</TableHead>
+                <TableHead className="w-30">Difficulty</TableHead>
+                <TableHead className="w-50">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

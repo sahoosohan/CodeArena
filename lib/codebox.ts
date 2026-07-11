@@ -12,6 +12,8 @@ export interface CodeboxResult {
   stdout: string | null;
   stderr: string | null;
   compile_output: string | null;
+  time?: string | number | null;
+  memory?: string | number | null;
   message?: string | null;
   error?: string;
   status?: {
@@ -54,6 +56,19 @@ export function getCodeboxLanguageId(language: string) {
   }
 
   return languageId;
+}
+
+export function getCodeboxLanguageName(languageId: number) {
+  const languageMap = {
+    50: "C",
+    54: "C++",
+    62: "Java",
+    63: "JavaScript",
+    71: "Python",
+    74: "TypeScript",
+  };
+
+  return languageMap[languageId as keyof typeof languageMap] ?? "Unknown";
 }
 
 export async function submitBatch(submissions: CodeboxSubmission[]) {

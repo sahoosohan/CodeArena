@@ -98,7 +98,7 @@ function SearchInput({ value, onChange }: SelectProps<string>) {
 function DifficultySelect({ value, onChange }: SelectProps<DifficultyFilter>) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-45">
         <SelectValue placeholder="Select difficulty" />
       </SelectTrigger>
       <SelectContent>
@@ -123,7 +123,7 @@ function TagSelect({
 }: SelectProps<string> & { tags: string[] }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-45">
         <SelectValue placeholder="Select tag" />
       </SelectTrigger>
       <SelectContent>

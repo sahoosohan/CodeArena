@@ -29,6 +29,8 @@ model User {
   imageUrl  String?
 
   problems  Problem[]
+  solvedProblems ProblemSolved[]
+  submissions Submission[]
 
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -60,4 +62,55 @@ model Problem {
 
   userId              String
   user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  solvedBy            ProblemSolved[]
+  submissions         Submission[]
+}
+
+model ProblemSolved {
+  id        String   @id @default(cuid())
+  userId    String
+  problemId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, problemId])
+}
+
+model Submission {
+  id            String           @id @default(cuid())
+  userId        String
+  problemId     String
+  sourceCode    String
+  language      String
+  stdin         String?
+  stdout        String?
+  stderr        String?
+  compileOutput String?
+  status        String
+  memory        String?
+  time          String?
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem       Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  testCases     TestCaseResult[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model TestCaseResult {
+  id            String     @id @default(cuid())
+  submissionId  String
+  testCase      Int
+  passed        Boolean
+  stdout        String?
+  expected      String?
+  stderr        String?
+  compileOutput String?
+  status        String
+  memory        String?
+  time          String?
+  submission    Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
