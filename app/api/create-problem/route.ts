@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!Array.isArray(testCases) || testCases.length == 0) {
+    if (!Array.isArray(testCases) || testCases.length === 0) {
       return NextResponse.json(
         { error: "At least one test case is required" },
         { status: 400 },

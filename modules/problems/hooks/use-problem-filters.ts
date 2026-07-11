@@ -4,17 +4,18 @@ import type { ProblemListItem } from "../types";
 
 type DifficultyFilter = Difficulty | "ALL";
 
+const getProblemTags = (problem: ProblemListItem) =>
+  problem.tags ?? [];
+
 export function useProblemFilters(problems: ProblemListItem[] = []) {
-  console.log("useProblemFilters called with problems:", problems);
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState<DifficultyFilter>("ALL");
   const [selectedTag, setSelectedTag] = useState("ALL");
 
-  //   Extract all unique tags from the problems
+  // Extract all unique tags from the problems
   const allTags = useMemo(() => {
     const tagsSet = new Set<string>();
-    problems.forEach((p) => p.tags.forEach((t) => tagsSet.add(t)));
-
+    problems.forEach((p) => getProblemTags(p).forEach((t: string) => tagsSet.add(t)));
     return Array.from(tagsSet);
   }, [problems]);
 
@@ -27,22 +28,18 @@ export function useProblemFilters(problems: ProblemListItem[] = []) {
         difficulty === "ALL" ? true : problem.difficulty === difficulty,
       )
       .filter((problem) =>
-        selectedTag === "ALL" ? true : problem.tags.includes(selectedTag),
+        selectedTag === "ALL" ? true : getProblemTags(problem).includes(selectedTag),
       );
   }, [problems, search, difficulty, selectedTag]);
-
-  console.log("Filtered Problems in useProblemFilters:", filteredProblems);
 
   return {
     search,
     difficulty,
     selectedTag,
     allTags,
-
     setSearch,
     setDifficulty,
     setSelectedTag,
-
     filteredProblems,
   };
 }

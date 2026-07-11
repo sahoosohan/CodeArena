@@ -4,7 +4,7 @@ export type ProblemListItem = {
   id: string;
   title: string;
   difficulty: Difficulty;
-  tags: string[];
+  tags?: string[];
   solvedBy?: unknown[];
 };
 

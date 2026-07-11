@@ -22,6 +22,7 @@ type ProblemRowProps = {
  */
 export function ProblemRow({ problem, user, onDelete, onSave }: ProblemRowProps) {
   const isSolved = (problem.solvedBy?.length ?? 0) > 0;
+  const tags = problem.tags ?? [];
 
   return (
     <TableRow>
@@ -37,7 +38,7 @@ export function ProblemRow({ problem, user, onDelete, onSave }: ProblemRowProps)
 
       {/* Tags */}
       <TableCell>
-        <TagsList tags={problem.tags} />
+        <TagsList tags={tags} />
       </TableCell>
 
       {/* Difficulty badge */}

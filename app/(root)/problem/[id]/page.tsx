@@ -23,7 +23,6 @@ const ProblemIdPage = () => {
     code,
     setCode,
     isRunning,
-    isSubmitting,
     executionResponse,
     handleRun,
     handleSubmit,
@@ -46,7 +45,7 @@ const ProblemIdPage = () => {
           <div className="space-y-6">
             <ProblemDescription
               problem={problem}
-              selectedLanguage={"JAVASCRIPT"}
+              selectedLanguage={selectedLanguage}
             />
             <ProblemTabs
               problem={problem}
@@ -64,13 +63,12 @@ const ProblemIdPage = () => {
               onRun={handleRun}
               onSubmit={handleSubmit}
               isRunning={isRunning}
-              isSubmitting={isSubmitting}
             />
 
-            {/* @ts-ignore */}
-            <TestCasesPanel testCases={problem.testCases} />
+            {problem?.testCases && (
+              <TestCasesPanel testCases={problem.testCases as any} />
+            )}
 
-            {/* TODO: Execution result */}
             <ExecutionResults executionResponse={executionResponse} />
           </div>
         </div>

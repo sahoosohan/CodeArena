@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -28,9 +29,6 @@ const ProblemsTable = ({ problems = [], user }: ProblemsTableProps) => {
   const filters = useProblemFilters(problems);
   const pagination = usePagination(filters.filteredProblems);
   const playlist = usePlaylistActions();
-
-  console.log("Filtered Problems:", filters.filteredProblems);
-  console.log("Current Page Problems:", pagination.paginatedItems);
   
   return (
     <div className="w-full max-w-7xl mx-auto space-y-8 p-6">
@@ -65,8 +63,8 @@ const ProblemsTable = ({ problems = [], user }: ProblemsTableProps) => {
                     key={problem.id}
                     problem={problem}
                     user={user}
-                    onDelete={() => {}}
-                    onSave={playlist.openAddToPlaylist}
+                    onDelete={() => { toast.info("Delete functionality not implemented yet") }}
+                    onSave={() => playlist.openAddToPlaylist(problem.id)}
                   />
                 ))
               ) : (

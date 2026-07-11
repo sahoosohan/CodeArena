@@ -13,21 +13,18 @@ export const getAllProblems = async () => {
     await getCurrentUserData();
 
     const problems = await prisma.problem.findMany({
-      include: {
-        solvedBy: true,
-      },
       orderBy: {
         createdAt: "desc",
       },
     });
 
-  return {
-    success: true,
-    data: problems.map(({ tag, ...problem }) => ({
-      ...problem,
-      tags: tag,
-    })),
-  };
+    return {
+      success: true,
+      data: problems.map(({ tag, ...problem }) => ({
+        ...problem,
+        tags: tag.filter(Boolean),
+      })),
+    };
   } catch (error) {
     console.error("❌ Error fetching problems:", error);
     return { success: false, error: "Failed to fetch problems" };
@@ -52,30 +49,24 @@ export const getProblemById = async (id: string) => {
   }
 };
 
-export const executeCode = async (
-  source_code: string,
-  language: string,
-  stdin: string[],
-  expected_outputs: string[],
-  id: string,
-) => {
-  const user = await getCurrentUserData();
+// --- Execution Helpers ---
 
+const validateExecutionRequest = (user: any, stdin: string[], expected_outputs: string[]) => {
   if (!user || "error" in user) {
-    return { success: false, error: "No authenticated user found" };
+    return { error: "No authenticated user found" };
   }
-
   if (
     !Array.isArray(stdin) ||
     stdin.length === 0 ||
     !Array.isArray(expected_outputs) ||
     expected_outputs.length !== stdin.length
   ) {
-    return { success: false, error: "Invalid Test Cases" };
+    return { error: "Invalid Test Cases" };
   }
+  return null;
+};
 
-  const languageId = getCodeboxLanguageId(language);
-
+const runCodeOnCodebox = async (source_code: string, languageId: number, stdin: string[], expected_outputs: string[]) => {
   const submissions = stdin.map((input, index) => ({
     source_code,
     language_id: languageId,
@@ -84,9 +75,7 @@ export const executeCode = async (
   }));
 
   const submitResponse = await submitBatch(submissions);
-
   const tokens = submitResponse.map((res) => res.token);
-
   const results = await pollBatchResults(tokens);
 
   let allPassed = true;
@@ -112,10 +101,22 @@ export const executeCode = async (
     };
   });
 
+  return { detailedResults, allPassed };
+};
+
+const saveSubmissionAndResults = async (
+  userId: string,
+  problemId: string,
+  source_code: string,
+  languageId: number,
+  stdin: string[],
+  detailedResults: any[],
+  allPassed: boolean
+) => {
   const submission = await prisma.submission.create({
     data: {
-      userId: user?.id,
-      problemId: id,
+      userId,
+      problemId,
       sourceCode: source_code,
       language: getCodeboxLanguageName(languageId),
       stdin: stdin.join("\n"),
@@ -138,15 +139,9 @@ export const executeCode = async (
 
   if (allPassed) {
     await prisma.problemSolved.upsert({
-      where: {
-        userId_problemId: { userId: user?.id, problemId: id },
-      },
-
+      where: { userId_problemId: { userId, problemId } },
       update: {},
-      create: {
-        userId: user.id,
-        problemId: id,
-      },
+      create: { userId, problemId },
     });
   }
 
@@ -165,12 +160,41 @@ export const executeCode = async (
 
   await prisma.testCaseResult.createMany({ data: testCaseResults });
 
-  const submissionWithTestCases = await prisma.submission.findUnique({
+  return prisma.submission.findUnique({
     where: { id: submission.id },
-    include: {
-      testCases: true,
-    },
+    include: { testCases: true },
   });
+};
+
+// --- Main Execute Action ---
+
+export const executeCode = async (
+  source_code: string,
+  language: string,
+  stdin: string[],
+  expected_outputs: string[],
+  id: string,
+) => {
+  const user = await getCurrentUserData();
+
+  const validationError = validateExecutionRequest(user, stdin, expected_outputs);
+  if (validationError) {
+    return { success: false, error: validationError.error };
+  }
+
+  const languageId = getCodeboxLanguageId(language);
+  const { detailedResults, allPassed } = await runCodeOnCodebox(source_code, languageId, stdin, expected_outputs);
+
+  const submissionWithTestCases = await saveSubmissionAndResults(
+    // @ts-ignore
+    user.id,
+    id,
+    source_code,
+    languageId,
+    stdin,
+    detailedResults,
+    allPassed
+  );
 
   return {
     success: true,
@@ -190,6 +214,7 @@ export const getAllSubmissionByCurrentUserForProblem = async (
   const submissions = await prisma.submission.findMany({
     where: {
       problemId: problemId,
+      // @ts-ignore
       userId: user.id,
     },
     orderBy: {

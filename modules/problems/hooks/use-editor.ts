@@ -14,21 +14,31 @@ type EditorProblem = {
   codeSnippets?: Record<string, string>;
 } | null;
 
+type ExecutionResponse = Awaited<ReturnType<typeof executeCode>> | null;
+
 export function useEditor(problem: EditorProblem, initialLanguage = "JAVASCRIPT") {
   const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage);
   const [code, setCode] = useState("");
   const [isRunning, setIsRunning] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [executionResponse, setExecutionResponse] = useState(null);
+  const [executionResponse, setExecutionResponse] =
+    useState<ExecutionResponse>(null);
 
   useEffect(() => {
-    if (problem?.codeSnippets?.[selectedLanguage]) {
-      setCode(problem?.codeSnippets?.[selectedLanguage]);
-    }
+    const snippet = problem?.codeSnippets?.[selectedLanguage];
+    if (!snippet) return;
+
+    let isCurrent = true;
+    queueMicrotask(() => {
+      if (isCurrent) setCode(snippet);
+    });
+
+    return () => {
+      isCurrent = false;
+    };
   }, [selectedLanguage, problem]);
 
   const handleRun = () => {
-    toast.success("This is your assignment");
+    handleSubmit();
   };
 
   const handleSubmit = async () => {
@@ -61,7 +71,6 @@ export function useEditor(problem: EditorProblem, initialLanguage = "JAVASCRIPT"
     code,
     setCode,
     isRunning,
-    isSubmitting,
     executionResponse,
     handleRun,
     handleSubmit,

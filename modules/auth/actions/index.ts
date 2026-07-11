@@ -28,8 +28,11 @@ export const onBoardUser = async () => {
         email: emailAddresses[0].emailAddress || "",
       },
     });
+    
+    return newUser;
   } catch (error) {
-    console.log(error);
+    console.error("Error in onBoardUser:", error);
+    return { success: false, error: "Failed to onboard user" };
   }
 };
 
@@ -38,7 +41,7 @@ export const currentUserRole = async () => {
     const user = await currentUser();
 
     if (!user) {
-      return { success: false, error: "No authenticated user found" };
+      return null;
     }
 
     const { id } = user;
@@ -48,9 +51,10 @@ export const currentUserRole = async () => {
       select: { role: true },
     });
 
-    return userRole?.role;
+    return userRole?.role || null;
   } catch (error) {
-    console.log(error);
+    console.error("Error in currentUserRole:", error);
+    return null;
   }
 };
 
@@ -67,6 +71,9 @@ export const getCurrentUserData = async () => {
     });
 
     return data
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error in getCurrentUserData:", error);
+    return {success: false, error: "Failed to fetch user data"}
+  }
 };
 

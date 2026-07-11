@@ -1,4 +1,3 @@
-import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { UserRole } from "@/lib/generated/prisma/enums";
 import { getCurrentUserData } from "@/modules/auth/actions";
@@ -25,11 +24,10 @@ const CreateProblemPage = async () => {
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold text-amber-400">
-        Welcome {user.firstName || "Admin"}! Create a Problem
-      </h1>
-      <ModeToggle />
-
+      <div className="flex justify-between items-center px-6 py-4 border-b dark:border-zinc-800">
+        <h1 className="text-2xl font-bold">Create New Problem</h1>
+      </div>
+      
       <CreateProblemForm />
     </section>
   );

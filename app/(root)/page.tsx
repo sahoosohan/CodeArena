@@ -1,6 +1,5 @@
-import Image from "next/image";
 import {Button} from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { onBoardUser } from "@/modules/auth/actions";
 import { ChevronRight, Code2, Play, Star, Trophy, Users, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -38,10 +37,9 @@ export default async function Home() {
   ];
 
   const stats = [
-    { number: "50K+", label: "Problems Solved" },
-    { number: "10K+", label: "Active Developers" },
-    { number: "25+", label: "Programming Languages" },
-    { number: "98%", label: "Success Rate" },
+    { value: "3+", label: "Programming Languages" },
+    { value: "Dark & Light", label: "Themes Supported" },
+    { value: "Real-time", label: "Code Execution" },
   ];
 
   const problemCategories = [
@@ -112,21 +110,16 @@ export default async function Home() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Button
-              size="lg"
-              className="bg-amber-500 hover:bg-amber-600 dark:bg-amber-400 dark:hover:bg-amber-500 text-white dark:text-gray-900 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
-            >
-              <Play className="w-5 h-5 mr-2" />
-              Start Coding Now
-              <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-2 border-indigo-300 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950"
-            >
-              Browse Problems
-            </Button>
+            <Link href="/problems">
+              <Button size="lg" className="gap-2 bg-green-600 hover:bg-green-700 text-white rounded-full px-8 h-12 w-full sm:w-auto">
+                Start Coding Now <ChevronRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/problems">
+              <Button size="lg" variant="outline" className="gap-2 rounded-full px-8 h-12 w-full sm:w-auto">
+                Browse Problems
+              </Button>
+            </Link>
           </div>
 
           {/* Stats */}
@@ -134,7 +127,7 @@ export default async function Home() {
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                  {stat.number}
+                  {stat.value}
                 </div>
                 <div className="text-gray-600 dark:text-gray-400 font-medium">
                   {stat.label}

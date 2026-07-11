@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import axios from "axios";
 
 type CreatePlaylistInput = {
   name: string;
@@ -29,14 +30,34 @@ export function usePlaylistActions() {
     setSelectedProblemId(null);
   };
 
-  const handleCreatePlaylist = ({ name }: CreatePlaylistInput) => {
-    toast.info(`Playlist "${name}" is ready to wire up.`);
-    closeCreateModal();
+  const handleCreatePlaylist = async ({ name, description }: CreatePlaylistInput) => {
+    try {
+      const response = await axios.post("/api/playlist", { name, description });
+      if (response.data.success) {
+        toast.success(`Playlist "${name}" created successfully.`);
+        closeCreateModal();
+      }
+    } catch (error) {
+      toast.error("Failed to create playlist.");
+      console.error(error);
+    }
   };
 
-  const handleAddToPlaylist = () => {
-    toast.info("Playlist saving is ready to wire up.");
-    closeAddToPlaylistModal();
+  const handleAddToPlaylist = async (playlistId: string) => {
+    if (!selectedProblemId) return;
+    try {
+      const response = await axios.post("/api/playlist/add-problem", { 
+        problemId: selectedProblemId,
+        playlistId
+      });
+      if (response.data.success) {
+        toast.success("Problem added to playlist.");
+        closeAddToPlaylistModal();
+      }
+    } catch (error) {
+      toast.error("Failed to add problem to playlist.");
+      console.error(error);
+    }
   };
 
   return {

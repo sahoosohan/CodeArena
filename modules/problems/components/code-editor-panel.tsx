@@ -21,7 +21,6 @@ const CodeEditorPanel = ({
   onRun,
   onSubmit,
   isRunning,
-  isSubmitting,
 }: any) => {
   const { theme } = useTheme();
 
@@ -54,11 +53,9 @@ const CodeEditorPanel = ({
             height={"400px"}
             language={getEditorLanguage(selectedLanguage)}
             value={code}
-            // @ts-ignore
-            onChange={(value:string)=>onCodeChange(value || "")}
+            onChange={(value:string | undefined)=>onCodeChange(value || "")}
             theme={theme === "dark" ? "vs-dark":"light"}
-            // @ts-ignore
-            options={EDITOR_OPTIONS}
+            options={{ ...EDITOR_OPTIONS, lineNumbers: "on" as const }}
             />
         </div>
 
@@ -73,13 +70,12 @@ const CodeEditorPanel = ({
             </Button>
 
              <Button
-             variant={"default"}
-            onClick={onSubmit}
-            disabled={isSubmitting}
-            className="flex items-center gap-2"
+             className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+             onClick={onSubmit}
+             disabled={isRunning}
           >
             <Send className="h-4 w-4" />
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+            Submit
           </Button>
         </div>
       </CardContent>

@@ -3,11 +3,11 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+interface ProblemsHeaderProps {
+  onCreatePlaylist: () => void;
+}
 
-export function ProblemsHeader({ onCreatePlaylist }:any) {
-
-  console.log(onCreatePlaylist)
-
+export const ProblemsHeader = ({ onCreatePlaylist }: ProblemsHeaderProps) => {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
